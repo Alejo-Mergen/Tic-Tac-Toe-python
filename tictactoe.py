@@ -34,23 +34,56 @@ def graficar_boar():
     for fila in range(3):#Iterar sobre la matrix
         for col in range(3):
             if tablero[fila][col] == 'X':
-                pass
+                dibujar_x(fila,col)
             elif tablero[fila][col] == 'O':
-                pass
+                dibujar_o(fila,col)
 
 def dibujar_x(fila,col):
-    pass
+    """
+    Funcion que le pasamos las filas y columnas y grafica la X
+    """
+    screen.blit(equis, coor[fila][col])
 
+def dibujar_o(fila,col):
+    """
+    Funcion que le pasamos las filas y columnas y grafica la O
+    """
+    screen.blit(circulo, coor[fila][col])
+
+def verificar_ganador():
+    for i in range(3):
+        if tablero[i][0] == tablero[i][1] == tablero[i][2] != '': #verificar horizontalmente
+            return True 
+        if tablero[0][i] == tablero[1][i] == tablero[2][i] != '': #verificacion vertical
+            return True 
+    if tablero[0][0] == tablero[1][1] == tablero[2][2] != '': 
+        return True 
+    if tablero[0][2] == tablero[1][1] == tablero[2][0] != '': 
+       return True 
+    return False
+    
 while not game_over: #Graficar las acciones del juego
     clock.tick(30)#FPS
 
     for event in pygame.event.get():#Captura todos los eventos que se hayan registrado durante la iteracion anterior
         if event.type == pygame.QUIT:
             game_over = True
-
+        elif event.type == pygame.MOUSEBUTTONDOWN: #Evento de click de boton
+            mouseX, mouseY = event.pos
+            if (mouseX >= 40 and mouseX < 415) and (mouseY >= 50 and mouseY < 425): #Logica para marcalar los limites de la tablero
+                fila = (mouseY - 50) // 125
+                col = (mouseX - 40) // 125
+                if tablero[fila][col] == '': #Logica para verificar si posicion esta vacia
+                    tablero[fila][col] = turno
+                    fin_juego = verificar_ganador()
+                    print(fin_juego)
+                    if fin_juego:
+                        print(f"El jugador {turno} a ganado!!")
+                        game_over = True
+                    turno = 'O' if turno == 'X' else 'X'#Cambio de turno
     
-    screen.blit(circulo, (40,50))
-    screen.blit(equis, (160,165))
+    graficar_boar()
     pygame.display.update()#Actualizar nuestro display
+
 
 pygame.quit()#Salir de juego
